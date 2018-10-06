@@ -16,6 +16,29 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".intent.Main2Activity"
+            android:process=":Main2Activity" />
+
+        <service
+            android:name=".intent.MyService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":MyService" />
+        <service
+            android:name=".messager.MessagerService"
+            android:process=":MessagerService" />
+        <service
+            android:name=".aidl.MyAidlService"
+            android:process=":myaidlservice" />
+
+        <activity
+            android:name=".remoteView.RemoteViewsActivity"
+            android:label="@string/title_activity_remote_views"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:process=":remoteview"></activity>
+        <service android:name=".binderpool.BinderPoolService"
+            android:process=":binderPoolService"/>
     </application>
 
 </manifest>
