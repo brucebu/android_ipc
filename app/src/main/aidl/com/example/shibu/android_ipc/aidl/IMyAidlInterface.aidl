@@ -16,5 +16,11 @@ interface IMyAidlInterface {
 //
     void printData(in TestData date);
 
+    void getDataOut(out TestData data);
+
+    void getDataInOut(inout TestData data);
+
+    void getDataIn(in TestData data);
+
     void startCrashTask();
 }

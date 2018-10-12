@@ -20,6 +20,7 @@ import android.widget.RemoteViews;
 import com.example.shibu.android_ipc.aidl.IAidlListener;
 import com.example.shibu.android_ipc.aidl.IMyAidlInterface;
 import com.example.shibu.android_ipc.aidl.MyAidlService;
+import com.example.shibu.android_ipc.binderpool.BinderPool;
 import com.example.shibu.android_ipc.intent.Main2Activity;
 import com.example.shibu.android_ipc.intent.MyService;
 import com.example.shibu.android_ipc.messager.MessagerService;
@@ -27,7 +28,6 @@ import com.example.shibu.android_ipc.aidl.TestData;
 import com.example.shibu.android_ipc.remoteView.RemoteViewsActivity;
 
 public class MainActivity extends AppCompatActivity {
-    private Button messageBtn;
     Messenger replyMessenger;
     final Handler handler = new MessengerHandler();
 
@@ -44,20 +44,6 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             messenger = new Messenger(service);
             replyMessenger = new Messenger(handler);
-            messageBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Message  message = Message.obtain();
-                    message.replyTo = replyMessenger;
-//                    message.obj = new TestData(2,"haha");
-                    message.what=20;
-                    try {
-                        messenger.send(message);
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
         }
 
         @Override
@@ -108,8 +94,19 @@ public class MainActivity extends AppCompatActivity {
                         public TestData getData() throws RemoteException {
                             return mTestData;
                         }
-
                     });
+                    mTestData.index = 123;
+                    mTestData.name = "123";
+                    iMyAidlInterface.getDataIn(mTestData);
+                    Log.d("wpstest",mTestData.toString());
+
+                    iMyAidlInterface.getDataOut(mTestData);
+                    Log.d("wpstest",mTestData.toString());
+                    mTestData.index = 123;
+                    mTestData.name = "123";
+                    iMyAidlInterface.getDataInOut(mTestData);
+                    Log.d("wpstest",mTestData.toString());
+
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -151,6 +148,22 @@ public class MainActivity extends AppCompatActivity {
                 bindService(intent,myConnection,BIND_AUTO_CREATE);
             }
         });
+
+        Button messageBtn = findViewById(R.id.messager);
+        messageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Message  message = Message.obtain();
+                message.replyTo = replyMessenger;
+//                    message.obj = new TestData(2,"haha");
+                message.what=20;
+                try {
+                    messenger.send(message);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         Button aidlBtn = findViewById(R.id.aidl);
         aidlBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        messageBtn = findViewById(R.id.messager);
+
         Button remoteviewBtn = findViewById(R.id.remoteview);
         remoteviewBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,31 +204,32 @@ public class MainActivity extends AppCompatActivity {
         musicBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.layout_remoteview);
-                remoteViews.setTextViewText(R.id.remote_text,"wps");
-                Bitmap bitmap = Bitmap.createBitmap(200,200, Bitmap.Config.RGB_565);
-                bitmap.eraseColor(Color.RED);
-                remoteViews.setImageViewBitmap(R.id.remote_img,bitmap);
-                Intent intent = new Intent(getApplicationContext(), RemoteViewsActivity.class);
-                intent.putExtra("remoteview",remoteViews);
-                startActivity(intent);
+                IBinder binder = BinderPool.getInstance().getService("music");
+                IMusicService musicService = IMusicService.Stub.asInterface(binder);
+                try {
+                    musicService.play("song");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
         });
         Button fmBtn = findViewById(R.id.fm);
         fmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.layout_remoteview);
-                remoteViews.setTextViewText(R.id.remote_text,"wps");
-                Bitmap bitmap = Bitmap.createBitmap(200,200, Bitmap.Config.RGB_565);
-                bitmap.eraseColor(Color.RED);
-                remoteViews.setImageViewBitmap(R.id.remote_img,bitmap);
-                Intent intent = new Intent(getApplicationContext(), RemoteViewsActivity.class);
-                intent.putExtra("remoteview",remoteViews);
-                startActivity(intent);
+                IBinder binder = BinderPool.getInstance().getService("fm");
+                IFmService fmService = IFmService.Stub.asInterface(binder);
+                try {
+                    fmService.play(105.8f);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
         });
+
         Intent intent = new Intent(this, MessagerService.class);
         bindService(intent, messengerConnection,BIND_AUTO_CREATE);
+
+        BinderPool.getInstance().init(getApplication());
     }
 }

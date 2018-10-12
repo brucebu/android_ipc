@@ -3,6 +3,7 @@
     package="com.example.shibu.android_ipc">
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -36,7 +37,8 @@
             android:name=".remoteView.RemoteViewsActivity"
             android:label="@string/title_activity_remote_views"
             android:theme="@style/AppTheme.NoActionBar"
-            android:process=":remoteview"></activity>
+            android:process=":remoteview">
+        </activity>
         <service android:name=".binderpool.BinderPoolService"
             android:process=":binderPoolService"/>
     </application>

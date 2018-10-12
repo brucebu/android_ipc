@@ -27,6 +27,22 @@ public class MyAidlService extends Service {
         }
 
         @Override
+        public void getDataOut(TestData data) throws RemoteException {
+            data.name="getdata";
+        }
+
+        @Override
+        public void getDataInOut(TestData data) throws RemoteException {
+            data.name="getdata";
+        }
+
+        @Override
+        public void getDataIn(TestData data) throws RemoteException {
+            data.name="getdata";
+        }
+
+
+        @Override
         public void startCrashTask() throws RemoteException {
             new Thread(new Runnable() {
                 @Override

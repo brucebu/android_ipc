@@ -5,14 +5,16 @@ import android.os.Parcelable;
 
 public class TestData implements Parcelable {
 
-    int index = 0;
+    public int index = 0;
 
-    String name = "wps";
+    public String name = "wps";
 
     private TestData(Parcel in) {
         index = in.readInt();
         name = in.readString();
     }
+
+    public TestData(){}
 
     public static final ClassLoaderCreator<TestData> CREATOR = new ClassLoaderCreator<TestData>() {
         @Override
@@ -56,5 +58,10 @@ public class TestData implements Parcelable {
     @Override
     public String toString() {
         return getClass().getName() + "index: "+index +";name:"+name;
+    }
+
+    public void readFromParcel(Parcel reply) {
+        index = reply.readInt();
+        name = reply.readString();
     }
 }

@@ -58,6 +58,6 @@ public class BinderPool {
                 e.printStackTrace();
             }
         }
-        return null;
+        return binder;
     }
 }
